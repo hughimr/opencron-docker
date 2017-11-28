@@ -1,0 +1,107 @@
+version: '3'
+services:
+    cron-server:
+      image: opencron-env
+      container_name: cron-server
+      links:
+        - cron-client1
+      expose:
+        - "3306"
+        - "1577"
+        - "17502"
+        - "7000"
+        - "7970"
+
+      ports:
+        - "8080:8080"
+        - "3306:3306"
+        - "1577:1577"
+      volumes:
+        - /home/cron/server/tmp:/root/tmp
+      hostname: cron-server
+      networks:
+        cluster:
+          ipv4_address: 192.168.4.110
+
+    cron-client1:
+      image: opencron-env
+      container_name: cron-client1
+      expose:
+        - "3306"
+        - "1577"
+        - "17502"
+        - "7000"
+        - "7970"
+      ports:
+        - "3307:3306"
+      volumes:
+        - /home/cron/client1/tmp:/root/tmp
+      privileged: true
+      networks:
+        cluster:
+          ipv4_address: 192.168.4.111
+#      dns:
+#        - 192.168.1.107
+      hostname: cron-client1
+#
+#    spark-slave2:
+#      image: hughntes/spark-hive:1.0:1.0
+#      container_name: spark-slave2
+#      expose:
+#        - "2181"
+#        - "2888"
+#        - "3888"
+#        - "9000"
+#      ports:
+#        - "8071:8081"
+#      privileged: true
+#      networks:
+#        cluster:
+#          ipv4_address: 192.168.3.112
+##      dns:
+##        - 192.168.1.107
+#      hostname: spark-slave2
+#
+#    spark-slave3:
+#      image: hughntes/spark-hive:1.0:1.0
+#      container_name: spark-slave3
+#      expose:
+#        - "2181"
+#        - "2888"
+#        - "3888"
+#        - "9000"
+#      ports:
+#        - "8061:8081"
+#      privileged: true
+#      networks:
+#        cluster:
+#          ipv4_address: 192.168.3.113
+##      dns:
+##        - 192.168.1.107
+#      hostname: spark-slave3
+#
+#    spark-slave4:
+#      image: hughntes/spark-hive:1.0:1.0
+#      container_name: spark-slave4
+#      expose:
+#        - "2181"
+#        - "2888"
+#        - "3888"
+#        - "9000"
+#      ports:
+#        - "8051:8081"
+#      networks:
+#        cluster:
+#          ipv4_address: 192.168.3.114
+#      privileged: true
+##      dns:
+##        - 192.168.1.107
+#      hostname: spark-slave4
+
+networks:
+  cluster:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 192.168.4.0/24
